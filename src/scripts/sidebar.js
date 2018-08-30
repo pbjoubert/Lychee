@@ -211,8 +211,7 @@ sidebar.createStructure.photo = function(data) {
 		structure.basics,
 		structure.image,
 		structure.tags,
-		structure.exif,
-		structure.sharing
+		structure.exif
 	]
 
 	return structure
@@ -313,8 +312,7 @@ sidebar.createStructure.album = function(data) {
 	// Construct all parts of the structure
 	structure = [
 		structure.basics,
-		structure.album,
-		structure.share
+		structure.album
 	]
 
 	return structure

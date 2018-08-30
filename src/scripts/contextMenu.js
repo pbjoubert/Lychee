@@ -74,11 +74,6 @@ contextMenu.add = function(albumID, e) {
 
 	let items = [
 		{ title: build.iconic('image') + 'Upload Photo', fn: () => $('#upload_files').click() },
-		{ },
-		{ title: build.iconic('link-intact') + 'Import from Link', fn: upload.start.url },
-		{ title: build.iconic('dropbox', 'ionicons') + 'Import from Dropbox', fn: upload.start.dropbox },
-		{ title: build.iconic('terminal') + 'Import from Server', fn: upload.start.server },
-		{ },
 		{ title: build.iconic('folder') + 'New Album', fn: () => album.add(albumID) }
 	]
 
