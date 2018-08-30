@@ -9,6 +9,7 @@ namespace Lychee;
 
 use Lychee\Modules\Config;
 use Lychee\Modules\Response;
+use Lychee\Modules\Session;
 use Lychee\Modules\Settings;
 use Lychee\Modules\Validator;
 
@@ -58,6 +59,9 @@ if (!empty($fn)) {
 		exit();
 
 	}
+
+	// Force to login
+	login(Settings::get()['username'], Settings::get()['password']);
 
 	// Check if user is logged
 	if ((isset($_SESSION['login'])&&$_SESSION['login']===true)&&
