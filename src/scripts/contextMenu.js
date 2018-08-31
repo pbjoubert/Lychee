@@ -21,7 +21,7 @@ const buildAlbumList = function(albums, exclude, action, parent = 0, layer = 0) 
 
 			let html = lychee.html`
 			           ${ prefix }
-			           <img class='cover' width='16' height='16' src='$${ thumb }'>
+			           <img class='cover' width='64' height='64' src='$${ thumb }'>
 			           <div class='title'>$${ album.title }</div>
 			           `
 
