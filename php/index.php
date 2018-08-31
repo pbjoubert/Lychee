@@ -61,7 +61,7 @@ if (!empty($fn)) {
 	}
 
 	// Force to login
-	login(Settings::get()['username'], Settings::get()['password']);
+	Session::login(Settings::get()['username'], Settings::get()['password']);
 
 	// Check if user is logged
 	if ((isset($_SESSION['login'])&&$_SESSION['login']===true)&&
