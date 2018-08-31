@@ -61,7 +61,8 @@ if (!empty($fn)) {
 	}
 
 	// Force to login
-	Session::login(Settings::get()['username'], Settings::get()['password']);
+	$session = new Session();
+	$session->login('lychee', 'lychee');
 
 	// Check if user is logged
 	if ((isset($_SESSION['login'])&&$_SESSION['login']===true)&&
