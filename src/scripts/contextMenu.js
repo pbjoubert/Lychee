@@ -86,15 +86,11 @@ contextMenu.add = function(albumID, e) {
 contextMenu.settings = function(e) {
 
 	let items = [
-		{ title: build.iconic('person') + 'Change Login', fn: settings.setLogin },
 		{ title: build.iconic('sort-ascending') + 'Change Sorting', fn: settings.setSorting },
-		{ title: build.iconic('dropbox', 'ionicons') + 'Set Dropbox', fn: settings.setDropboxKey },
 		{ },
 		{ title: build.iconic('info') + 'About Lychee', fn: () => window.open(lychee.website) },
 		{ title: build.iconic('wrench') + 'Diagnostics', fn: () => window.open('plugins/Diagnostics/') },
-		{ title: build.iconic('align-left') + 'Show Log', fn: () => window.open('plugins/Log/') },
-		{ },
-		{ title: build.iconic('account-logout') + 'Sign Out', fn: lychee.logout }
+		{ title: build.iconic('align-left') + 'Show Log', fn: () => window.open('plugins/Log/') }
 	]
 
 	basicContext.show(items, e.originalEvent)
