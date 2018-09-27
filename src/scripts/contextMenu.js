@@ -73,7 +73,7 @@ contextMenu = {}
 contextMenu.add = function(albumID, e) {
 
 	let items = [
-		{ title: build.iconic('image') + 'Upload Photo', fn: () => $('#upload_files').click() },
+		{ title: build.iconic('image') + 'Upload Photo', fn: () => $('#upload_files').click(), disabled: albumID == 0 },
 		{ title: build.iconic('folder') + 'New Album', fn: () => album.add(albumID) }
 	]
 
