@@ -33,9 +33,13 @@ final class Albums {
 
 		$all_albums = array();
 		$quick = isset($_POST['quick']) and $_POST['quick'] == 'true';
+		$flat = isset($_POST['flat']) and $_POST['flat'] == 'true';
+
 		if($quick) {
 			$album = new Album($parent);
 			$album = $album->get();
+
+			if ($flat) array_push($all_albums, $album);
 
 			$current_album = $album;
 			while (true) {
@@ -47,7 +51,7 @@ final class Albums {
 				array_push($all_albums, $current_album);
 			}
 
-			$query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? WHERE parent = '?'" . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $album['parent']));
+			$query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? WHERE parent = '?'" . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $flat ? $album['id'] : $album['parent']));
 			$albums = Database::execute(Database::get(), $query, __METHOD__, __LINE__);
 			while ($calbum = $albums->fetch_assoc()) {
 				array_push($all_albums, $calbum);
