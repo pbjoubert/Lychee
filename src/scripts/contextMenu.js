@@ -172,7 +172,7 @@ contextMenu.albumMulti = function(albumIDs, e) {
 
 contextMenu.albumTitle = function(albumID, e) {
 
-	api.post('Albums::get', { parent: -1 }, function(data) {
+	api.post('Albums::get', { parent: albumID, quick: true, flat: true }, function(data) {
 
 		let items = []
 
