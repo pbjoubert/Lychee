@@ -475,7 +475,7 @@ final class Album {
 
 	}
 
-	private function getSubAlbums($albumID) {
+	public function getSubAlbums($albumID) {
 
 		$query = Database::prepare(Database::get(), "SELECT id FROM ? WHERE parent = '?'", array(LYCHEE_TABLE_ALBUMS, $albumID));
 		$albums = Database::execute(Database::get(), $query, __METHOD__, __LINE__);

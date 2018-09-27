@@ -31,18 +31,44 @@ final class Albums {
 		// Get SmartAlbums
 		if ($public===false) $return['smartalbums'] = $this->getSmartAlbums();
 
-		// Albums query
-		if ($public===false) $query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? " . ($parent != -1 ? "WHERE parent = '?' " : "") . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $parent));
-		else                 $query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? " . ($parent != -1 ? "WHERE parent = '?' " : "") . " AND public = 1 AND visible <> 0 " . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $parent));
+		$all_albums = array();
+		$quick = isset($_POST['quick']) and $_POST['quick'] == 'true';
+		if($quick) {
+			$album = new Album($parent);
+			$album = $album->get();
 
-		// Execute query
-		$albums = Database::execute(Database::get(), $query, __METHOD__, __LINE__);
+			$current_album = $album;
+			while (true) {
+				if ($current_album['parent'] == 0) break;
 
-		if ($albums===false) return false;
+				$current_album = new Album($current_album['parent']);
+				$current_album = $current_album->get();
 
-		// For each album
-		while ($album = $albums->fetch_assoc()) {
+				array_push($all_albums, $current_album);
+			}
 
+			$query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? WHERE parent = '?'" . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $album['parent']));
+			$albums = Database::execute(Database::get(), $query, __METHOD__, __LINE__);
+			while ($calbum = $albums->fetch_assoc()) {
+				array_push($all_albums, $calbum);
+			}
+		}
+		else {
+			// Albums query
+			if ($public===false) $query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? " . ($parent != -1 ? "WHERE parent = '?' " : "") . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $parent));
+			else                 $query = Database::prepare(Database::get(), "SELECT id, title, public, sysstamp, password, parent FROM ? " . ($parent != -1 ? "WHERE parent = '?' " : "") . " AND public = 1 AND visible <> 0 " . Settings::get()['sortingAlbums'], array(LYCHEE_TABLE_ALBUMS, $parent));
+
+			// Execute query
+			$albums = Database::execute(Database::get(), $query, __METHOD__, __LINE__);
+			if ($albums===false) return false;
+
+			// For each album
+			while ($album = $albums->fetch_assoc()) {
+				array_push($all_albums, $album);
+			}
+		}
+
+		foreach ($all_albums as $album) {
 			// Turn data from the database into a front-end friendly format
 			$album = Album::prepareData($album);
 
@@ -71,7 +97,7 @@ final class Albums {
 		}
 
 		// Num of albums
-		$return['num'] = $albums->num_rows;
+		$return['num'] = count($all_albums);
 
 		// Call plugins
 		Plugins::get()->activate(__METHOD__, 1, func_get_args());

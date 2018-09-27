@@ -105,10 +105,25 @@ contextMenu.album = function(albumID, e) {
 
 	if (album.isSmartID(albumID)) return false
 
+	let parent_is_root = false;
+	$.ajax({
+		type: 'POST',
+		url: api.path,
+		data: {
+			function: 'Album::get',
+			albumID: albumID
+		},
+		success: function(data) {
+			parent_is_root = (data.parent == '0') ? true : false;
+		},
+		dataType: 'json',
+		async: false
+	});
+
 	let items = [
 		{ title: build.iconic('pencil') + 'Rename', fn: () => album.setTitle([ albumID ]) },
-		{ title: build.iconic('collapse-left') + 'Merge', fn: () => { basicContext.close(); contextMenu.mergeAlbum(albumID, e) } },
-		{ title: build.iconic('folder') + 'Move', fn: () => { basicContext.close(); contextMenu.moveAlbum([ albumID ], e) } },
+		{ title: build.iconic('collapse-left') + 'Merge', fn: () => { basicContext.close(); contextMenu.mergeAlbum(albumID, e) }, disabled: parent_is_root },
+		{ title: build.iconic('folder') + 'Move', fn: () => { basicContext.close(); contextMenu.moveAlbum([ albumID ], e) }, disabled: parent_is_root },
 		{ title: build.iconic('trash') + 'Delete', fn: () => album.delete([ albumID ]) }
 	]
 
@@ -126,11 +141,26 @@ contextMenu.albumMulti = function(albumIDs, e) {
 	// Show list of albums otherwise
 	let autoMerge = (albumIDs.length>1 ? true : false)
 
+	let parent_is_root = false;
+	$.ajax({
+		type: 'POST',
+		url: api.path,
+		data: {
+			function: 'Album::get',
+			albumID: albumIDs[0]
+		},
+		success: function(data) {
+			parent_is_root = (data.parent == '0') ? true : false;
+		},
+		dataType: 'json',
+		async: false
+	});
+
 	let items = [
 		{ title: build.iconic('pencil') + 'Rename All', fn: () => album.setTitle(albumIDs) },
-		{ title: build.iconic('collapse-left') + 'Merge All', visible: autoMerge, fn: () => album.merge(albumIDs) },
-		{ title: build.iconic('collapse-left') + 'Merge', visible: !autoMerge, fn: () => { basicContext.close(); contextMenu.mergeAlbum(albumIDs[0], e) } },
-		{ title: build.iconic('folder') + 'Move All', fn: () => { basicContext.close(); contextMenu.moveAlbum(albumIDs, e) } },
+		{ title: build.iconic('collapse-left') + 'Merge All', visible: autoMerge, fn: () => album.merge(albumIDs), disabled: parent_is_root },
+		{ title: build.iconic('collapse-left') + 'Merge', visible: !autoMerge, fn: () => { basicContext.close(); contextMenu.mergeAlbum(albumIDs[0], e) }, disabled: parent_is_root },
+		{ title: build.iconic('folder') + 'Move All', fn: () => { basicContext.close(); contextMenu.moveAlbum(albumIDs, e) }, disabled: parent_is_root },
 		{ title: build.iconic('trash') + 'Delete All', fn: () => album.delete(albumIDs) }
 	]
 
@@ -164,7 +194,7 @@ contextMenu.albumTitle = function(albumID, e) {
 
 contextMenu.mergeAlbum = function(albumID, e) {
 
-	api.post('Albums::get', { parent: -1 }, function(data) {
+	api.post('Albums::get', { parent: albumID, quick: true }, function(data) {
 
 		let items = []
 
@@ -196,7 +226,7 @@ contextMenu.mergeAlbum = function(albumID, e) {
 
 contextMenu.moveAlbum = function(albumIDs, e) {
 
-	api.post('Albums::get', { parent: -1 }, function(data) {
+	api.post('Albums::get', { parent: albumIDs[0], quick: true }, function(data) {
 
 		let items = []
 
@@ -213,8 +243,6 @@ contextMenu.moveAlbum = function(albumIDs, e) {
 			}
 
 			items = buildAlbumList(data.albums, exclude, (a) => album.move([ a.id ].concat(albumIDs), [ a.title, title ]), 0, 1)
-
-			items.unshift({ title: 'Root', fn: () => album.move([ 0 ].concat(albumIDs), [ 'Root', title ]) })
 
 		}
 
