@@ -38,7 +38,6 @@ final class Albums {
 		if($quick) {
 			$album = new Album($parent);
 			$album = $album->get();
-
 			if ($flat) array_push($all_albums, $album);
 
 			$current_album = $album;
@@ -47,7 +46,6 @@ final class Albums {
 
 				$current_album = new Album($current_album['parent']);
 				$current_album = $current_album->get();
-
 				array_push($all_albums, $current_album);
 			}
 
